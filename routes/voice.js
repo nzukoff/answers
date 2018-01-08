@@ -5,7 +5,7 @@ var survey = require('../survey_data');
 // Main interview loop
 exports.interview = function(request, response) {
     var phone = request.body.From;
-    var input = request.body.RecordingUrl || request.body.Digits;
+    var input = request.body.RecordingUrl;
     var twiml = new VoiceResponse();
 
     // helper to append a new "Say" verb with alice voice
@@ -25,6 +25,7 @@ exports.interview = function(request, response) {
         input: input,
         survey: survey
     }, function(err, surveyResponse, questionIndex) {
+        console.log("SURVEY RESPONSE 1 IS ", surveyResponse)
         var question = survey[questionIndex];
 
         if (err || !surveyResponse) {
@@ -34,68 +35,73 @@ exports.interview = function(request, response) {
 
         // If question is null, we're done!
         if (!question) {
-            say('Thank you for taking this survey. Goodbye!');
+            say('Thanks!');
             return respond();
         }
 
         // Add a greeting if this is the first question
         if (questionIndex === 0) {
-            say('Thank you for taking our survey. Please listen carefully '
-                + 'to the following questions.');
+            say('We are wondering');
         }
 
         // Otherwise, ask the next question
-        say(question.text);
+        twiml.play(question.url);
 
         // Depending on the type of question, we either need to get input via
         // DTMF tones or recorded speech
-        if (question.type === 'text') {
-            say('Please record your response after the beep. '
-                + 'Press any key to finish.');
+        if (question.type === 'recording') {
+            console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
             twiml.record({
-                transcribe: true,
-                transcribeCallback: '/voice/' + surveyResponse._id
-                    + '/transcribe/' + questionIndex,
-                maxLength: 60
+                playBeep: true,
+                timeout: 5,
+                recordingStatusCallback: '/voice/' + surveyResponse._id
+                    + '/status/' + questionIndex,
+                maxLength: 1800
             });
-        } else if (question.type === 'boolean') {
-            say('Press one for "yes", and any other key for "no".');
-            twiml.gather({
-                timeout: 10,
-                numDigits: 1
-            });
-        } else {
-            // Only other supported type is number
-            say('Enter the number using the number keys on your telephone.'
-                + ' Press star to finish.');
-            twiml.gather({
-                timeout: 10,
-                finishOnKey: '*'
-            });
-        }
+        } 
 
+        console.log("SURVEY RESPONSE ID IS ", surveyResponse._id)
         // render TwiML response
         respond();
     });
 };
 
-// Transcripton callback - called by Twilio with transcript of recording
-// Will update survey response outside the interview call flow
-exports.transcription = function(request, response) {
+exports.duration = function(request, response) {
     var responseId = request.params.responseId;
+    console.log("RESPONSE ID IS ", responseId)
     var questionIndex = request.params.questionIndex;
-    var transcript = request.body.TranscriptionText;
-
     SurveyResponse.findById(responseId, function(err, surveyResponse) {
+        console.log("SURVEY RESPONSE 2 IS ", surveyResponse)
         if (err || !surveyResponse ||
             !surveyResponse.responses[questionIndex])
             return response.status(500).end();
 
         // Update appropriate answer field
-        surveyResponse.responses[questionIndex].answer = transcript;
+        surveyResponse.responses[questionIndex].duration = request.body.RecordingDuration;
         surveyResponse.markModified('responses');
         surveyResponse.save(function(err, doc) {
             return response.status(err ? 500 : 200).end();
         });
     });
-};
+}
+
+// // Transcripton callback - called by Twilio with transcript of recording
+// // Will update survey response outside the interview call flow
+// exports.transcription = function(request, response) {
+//     var responseId = request.params.responseId;
+//     var questionIndex = request.params.questionIndex;
+//     var transcript = request.body.TranscriptionText;
+
+//     SurveyResponse.findById(responseId, function(err, surveyResponse) {
+//         if (err || !surveyResponse ||
+//             !surveyResponse.responses[questionIndex])
+//             return response.status(500).end();
+
+//         // Update appropriate answer field
+//         surveyResponse.responses[questionIndex].answer = transcript;
+//         surveyResponse.markModified('responses');
+//         surveyResponse.save(function(err, doc) {
+//             return response.status(err ? 500 : 200).end();
+//         });
+//     });
+// };

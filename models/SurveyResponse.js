@@ -3,7 +3,7 @@ var mongoose = require('mongoose');
 var SurveyResponseSchema = new mongoose.Schema({
     // phone number of participant
     phone: String,
-
+    time : { type : Date, default: Date.now },
     // status of the participant's current survey response
     complete: {
         type: Boolean,
@@ -30,6 +30,7 @@ SurveyResponseSchema.statics.advanceSurvey = function(args, cb) {
         surveyResponse = doc || new SurveyResponse({
             phone: phone
         });
+        // console.log("NEW SURVEY RESPONSE IS ", surveyResponse)
         processInput();
     });
 
@@ -46,26 +47,17 @@ SurveyResponseSchema.statics.advanceSurvey = function(args, cb) {
         }
 
         // If we have no input, ask the current question again
-        if (!input) return reask();
+        if (!input) {
+            console.log("HERES THE ERROR 1")
+            return reask();
+        }
 
         // Otherwise use the input to answer the current question
         var questionResponse = {};
-        if (currentQuestion.type === 'boolean') {
-            // Anything other than '1' or 'yes' is a false
-            var isTrue = input === '1' || input.toLowerCase() === 'yes';
-            questionResponse.answer = isTrue;
-        } else if (currentQuestion.type === 'number') {
-            // Try and cast to a Number
-            var num = Number(input);
-            if (isNaN(num)) {
-                // don't update the survey response, return the same question
-                return reask();
-            } else {
-                questionResponse.answer = num;
-            }
-        } else if (input.indexOf('http') === 0) {
-            // input is a recording URL
+        if (input.indexOf('http') === 0) {
             questionResponse.recordingUrl = input;
+            // input is a recording URL
+            
         } else {
             // otherwise store raw value
             questionResponse.answer = input;
@@ -73,6 +65,8 @@ SurveyResponseSchema.statics.advanceSurvey = function(args, cb) {
 
         // Save type from question
         questionResponse.type = currentQuestion.type;
+        questionResponse.time = new Date().toString();
+        questionResponse.currentQuestion = currentQuestion.url;
         surveyResponse.responses.push(questionResponse);
 
         // If new responses length is the length of survey, mark as done
@@ -83,8 +77,10 @@ SurveyResponseSchema.statics.advanceSurvey = function(args, cb) {
         // Save response
         surveyResponse.save(function(err) {
             if (err) {
+                console.log("HERES THE ERROR 2")
                 reask();
             } else {
+                console.log("RESPONSE LENGTH IN SURVEY RESPONSE IS ", responseLength)
                 cb.call(surveyResponse, err, surveyResponse, responseLength+1);
             }
         });

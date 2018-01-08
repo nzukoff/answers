@@ -5,7 +5,7 @@ var mongoose = require('mongoose');
 var urlencoded = require('body-parser').urlencoded;
 var config = require('./config');
 var voice = require('./routes/voice');
-var message = require('./routes/message');
+// var message = require('./routes/message');
 var results = require('./routes/results');
 var Promise = require('bluebird');
 
@@ -41,8 +41,8 @@ app.use(morgan('combined'));
 
 // Twilio Webhook routes
 app.post('/voice', voice.interview);
-app.post('/voice/:responseId/transcribe/:questionIndex', voice.transcription);
-app.post('/message', message);
+app.post('/voice/:responseId/status/:questionIndex', voice.duration);
+// app.post('/message', message);
 
 // Ajax route to aggregate response data for the UI
 app.get('/results', results);

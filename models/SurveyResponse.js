@@ -9,7 +9,6 @@ var SurveyResponseSchema = new mongoose.Schema({
         type: Boolean,
         default: false
     },
-
     // record of answers
     responses: [mongoose.Schema.Types.Mixed]
 });
@@ -27,10 +26,11 @@ SurveyResponseSchema.statics.advanceSurvey = function(args, cb) {
         phone: phone,
         complete: false
     }, function(err, doc) {
+        console.log("DOC IS ",doc)
         surveyResponse = doc || new SurveyResponse({
             phone: phone
         });
-        // console.log("NEW SURVEY RESPONSE IS ", surveyResponse)
+        console.log("NEW SURVEY RESPONSE IS ", surveyResponse)
         processInput();
     });
 
@@ -48,7 +48,6 @@ SurveyResponseSchema.statics.advanceSurvey = function(args, cb) {
 
         // If we have no input, ask the current question again
         if (!input) {
-            console.log("HERES THE ERROR 1")
             return reask();
         }
 

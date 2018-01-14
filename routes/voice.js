@@ -17,6 +17,7 @@ exports.interview = function(request, response) {
     function respond() {
         response.type('text/xml');
         response.send(twiml.toString());
+        console.log("RESPONDED")
     }
 
     // Find an in-progess survey if one exists, otherwise create one
@@ -27,6 +28,7 @@ exports.interview = function(request, response) {
     }, function(err, surveyResponse, questionIndex) {
         console.log("SURVEY RESPONSE 1 IS ", surveyResponse)
         var question = survey[questionIndex];
+        console.log("SURVEY RESPONSE ID IS ", surveyResponse._id)
 
         if (err || !surveyResponse) {
             say('Terribly sorry, but an error has occurred. Goodbye.');
@@ -52,7 +54,7 @@ exports.interview = function(request, response) {
         if (question.type === 'recording') {
             console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
             twiml.record({
-                playBeep: true,
+                playBeep: false,
                 timeout: 5,
                 recordingStatusCallback: '/voice/' + surveyResponse._id
                     + '/status/' + questionIndex,
@@ -60,7 +62,6 @@ exports.interview = function(request, response) {
             });
         } 
 
-        console.log("SURVEY RESPONSE ID IS ", surveyResponse._id)
         // render TwiML response
         respond();
     });

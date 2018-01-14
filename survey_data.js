@@ -13,7 +13,7 @@ module.exports = [
     //     type: 'recording'
     // }, 
     {
-        url: 'http://cf-public-view.s3.amazonaws.com/PN447/AZ/Sounds%20Bites/Sounds/backPocketClarinet1.wav',
+        url: 'https://s3.us-east-2.amazonaws.com/nz-answers/questions/q1sample.wav',
         type: 'recording'
     }
 

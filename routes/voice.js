@@ -42,9 +42,9 @@ exports.interview = function(request, response) {
         }
 
         // Add a greeting if this is the first question
-        if (questionIndex === 0) {
-            say('We are wondering');
-        }
+        // if (questionIndex === 0) {
+        //     say('We are wondering');
+        // }
 
         // Otherwise, ask the next question
         twiml.play(question.url);

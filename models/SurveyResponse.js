@@ -33,7 +33,7 @@ SurveyResponseSchema.statics.advanceSurvey = function(args, cb) {
             phone: phone
         });
         surveyResponse.save(function (err) {
-            if (err) console.log("SAVE ERROR IS ", err)})
+            if (err) console.log("SAVE ERROR IS ", err)})            
         console.log("NEW SURVEY RESPONSE IS ", surveyResponse)
         processInput();
     });

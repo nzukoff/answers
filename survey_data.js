@@ -5,7 +5,7 @@ module.exports = [
     //     type: 'recording'
     // }, 
     {
-        url: 'https://s3.us-east-2.amazonaws.com/nz-answers/questions/q1sample.wav',
+        url: 'https://s3.us-east-2.amazonaws.com/nz-answers/questions/p-answers.wav',
         type: 'recording'
     }
 

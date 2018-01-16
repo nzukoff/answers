@@ -11,6 +11,8 @@ var SurveyResponseSchema = new mongoose.Schema({
     },
     // record of answers
     responses: [mongoose.Schema.Types.Mixed]
+},{
+    usePushEach: true
 });
 
 // For the given phone number and survey, advance the survey to the next
@@ -30,6 +32,8 @@ SurveyResponseSchema.statics.advanceSurvey = function(args, cb) {
         surveyResponse = doc || new SurveyResponse({
             phone: phone
         });
+        surveyResponse.save(function (err) {
+            if (err) console.log("SAVE ERROR IS ", err)})
         console.log("NEW SURVEY RESPONSE IS ", surveyResponse)
         processInput();
     });

@@ -13,9 +13,13 @@
 
     <!-- CSS Dependencies -->
     <link rel="stylesheet"
-        href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+        href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-beta/css/bootstrap.css">
     <link rel="stylesheet" 
         href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+    <link rel="stylesheet" 
+        href="https://cdn.datatables.net/1.10.16/css/dataTables.bootstrap4.min.css">
+    <!-- <link rel="stylesheet" 
+        href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css">     -->
 
     <!-- App CSS -->
     <link rel="stylesheet" href="main.css">
@@ -46,10 +50,15 @@
 
     <div class="row">
         <h3 id="q1">QUESTION 1</h3>
-        <table class="table" id="turtleResponses">
-            <tr>
-                <!-- <th>Recording</th> -->
-            </tr>
+        <table class="table table-hover table-sm" id="turtleResponses">
+            <thead>
+                <tr>
+                    <th data-sortable="true" data-sorter="durationSorter">Duration</th>
+                    <th>Time</th>
+                    <th>Phone Number</th>
+                    <th>Link</th>
+                </tr>
+            </thead>
         </table>
     </div>
 
@@ -71,7 +80,10 @@
 
 <!-- JS Dependencies -->
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
-<script src="chart.js"></script>
+
+<script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.16/js/dataTables.bootstrap4.min.js"></script>
+<!-- <script src="chart.js"></script> -->
 
 <!-- App script -->
 <script src="index.js"></script>
